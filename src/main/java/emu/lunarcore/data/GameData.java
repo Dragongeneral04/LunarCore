@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 import java.util.List;
 import java.util.ArrayList;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import emu.lunarcore.data.config.FloorInfo;
 import emu.lunarcore.data.excel.*;
 import emu.lunarcore.game.battle.MazeBuff;
@@ -61,6 +62,7 @@ public class GameData {
     private static Int2ObjectMap<MonsterDropExcel> monsterDropExcelMap = new Int2ObjectOpenHashMap<>();
     private static Int2ObjectMap<MonsterExcel> monsterExcelMap = new Int2ObjectOpenHashMap<>();
     private static Int2ObjectMap<QuestExcel> questExcelMap = new Int2ObjectLinkedOpenHashMap<>();
+    private static Int2ObjectMap<TextJoinExcel> textJoinExcelMap = new Int2ObjectLinkedOpenHashMap<>();
     
     private static Int2ObjectMap<PlayerLevelExcel> playerLevelExcelMap = new Int2ObjectOpenHashMap<>();
     private static Int2ObjectMap<ExpTypeExcel> expTypeExcelMap = new Int2ObjectOpenHashMap<>();
@@ -140,6 +142,19 @@ public class GameData {
         }
 
         return allIds;
+    }
+
+    public static int TextJoinItemFromId(int id) {
+        for (Int2ObjectMap.Entry<TextJoinExcel> entry : textJoinExcelMap.int2ObjectEntrySet()) {
+            TextJoinExcel textJoinExcel = entry.getValue();
+            if (textJoinExcel.getId() == id) {
+                IntArrayList textJoinItemList = textJoinExcel.getTextJoinItemList();
+                if (textJoinItemList.size() > 0) {
+                    return textJoinItemList.getInt(textJoinItemList.size() - 1);
+                }
+            }
+        }
+        return id * 10; // or return a default value if needed
     }
 
     public static List<Integer> getAllQuestIds() {
