@@ -48,6 +48,7 @@ public class GameData {
     @Getter private static Int2ObjectMap<RogueRoomExcel> rogueRoomExcelMap = new Int2ObjectOpenHashMap<>();
     @Getter private static Int2ObjectMap<RogueMapExcel> rogueMapExcelMap = new Int2ObjectOpenHashMap<>();
     @Getter private static Int2ObjectMap<RogueMonsterExcel> rogueMonsterExcelMap = new Int2ObjectOpenHashMap<>();
+    private static Int2ObjectMap<RogueBuffExcel> rogueBuffExcelMap = new Int2ObjectOpenHashMap<>();
     
     private static Int2ObjectMap<AvatarPromotionExcel> avatarPromotionExcelMap = new Int2ObjectOpenHashMap<>();
     private static Int2ObjectMap<AvatarSkillTreeExcel> avatarSkillTreeExcelMap = new Int2ObjectOpenHashMap<>();
@@ -59,6 +60,7 @@ public class GameData {
     private static Int2ObjectMap<PhoneThemeExcel> phoneThemeExcelMap = new Int2ObjectOpenHashMap<>();
     private static Int2ObjectMap<MonsterDropExcel> monsterDropExcelMap = new Int2ObjectOpenHashMap<>();
     private static Int2ObjectMap<MonsterExcel> monsterExcelMap = new Int2ObjectOpenHashMap<>();
+    private static Int2ObjectMap<QuestExcel> questExcelMap = new Int2ObjectLinkedOpenHashMap<>();
     
     private static Int2ObjectMap<PlayerLevelExcel> playerLevelExcelMap = new Int2ObjectOpenHashMap<>();
     private static Int2ObjectMap<ExpTypeExcel> expTypeExcelMap = new Int2ObjectOpenHashMap<>();
@@ -135,6 +137,17 @@ public class GameData {
         for (Int2ObjectMap.Entry<BackGroundMusicExcel> entry : backGroundMusicExcelMap.int2ObjectEntrySet()) {
             BackGroundMusicExcel backGroundMusicExcel = entry.getValue();
             allIds.add(backGroundMusicExcel.getId());
+        }
+
+        return allIds;
+    }
+
+    public static List<Integer> getAllQuestIds() {
+        List<Integer> allIds = new ArrayList<>();
+
+        for (Int2ObjectMap.Entry<QuestExcel> entry : questExcelMap.int2ObjectEntrySet()) {
+            QuestExcel questExcel = entry.getValue();
+            allIds.add(questExcel.getId());
         }
 
         return allIds;
@@ -244,5 +257,9 @@ public class GameData {
     
     public static RogueMapExcel getRogueMapExcel(int rogueMapId, int siteId) {
         return rogueMapExcelMap.get((rogueMapId << 8) + siteId);
+    }
+    
+    public static RogueBuffExcel getRogueBuffExcel(int rogueBuffId, int level) {
+        return rogueBuffExcelMap.get((rogueBuffId << 4) + level);
     }
 }
