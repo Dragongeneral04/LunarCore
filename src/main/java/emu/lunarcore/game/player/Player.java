@@ -82,7 +82,7 @@ public class Player {
     @Setter private PlayerGender gender;
 
     private int level;
-    private int exp;
+    private int exp; // Total exp
     private int worldLevel;
     private int scoin; // Credits
     private int hcoin; // Jade
@@ -187,6 +187,13 @@ public class Player {
 
     public Account getAccount() {
         return session.getAccount();
+    }
+
+    public void setLevel(int newLevel) {
+        this.level = Math.max(Math.min(newLevel, GameConstants.MAX_TRAILBLAZER_LEVEL), 1);
+        this.exp = GameData.getPlayerExpRequired(this.level);
+        this.sendPacket(new PacketPlayerSyncScNotify(this));
+        this.save();
     }
     
     public boolean isOnline() {

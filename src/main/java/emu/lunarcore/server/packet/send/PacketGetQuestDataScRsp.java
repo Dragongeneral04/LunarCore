@@ -15,13 +15,13 @@ public class PacketGetQuestDataScRsp extends BasePacket {
 
         var allIds = GameData.getAllQuestIds();
 
-        var data = GetQuestDataScRsp.newInstance()
-            .setTotalAchievementExp(69);
+        var data = GetQuestDataScRsp.newInstance();
+            //.setTotalAchievementExp(69);
 
         for (int questId : allIds) {
             var questItem = Quest.newInstance()
                 .setId(questId)
-                .setStatus(QuestStatus.QUEST_FINISH)
+                .setStatus(QuestStatus.QUEST_CLOSE)
                 .setFinishTime(10000L)
                 .setProgress(1);
             data.addQuestList(questItem);

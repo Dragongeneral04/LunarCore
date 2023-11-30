@@ -1,13 +1,13 @@
 package emu.lunarcore.command.commands;
 
-import emu.lunarcore.GameConstants;
+import emu.lunarcore.util.Utils;
 import emu.lunarcore.command.Command;
 import emu.lunarcore.command.CommandArgs;
 import emu.lunarcore.command.CommandHandler;
 import emu.lunarcore.game.player.Player;
 
-@Command(label = "refill", aliases = {"rf"}, permission = "player.refill", desc = "/refill - refill your skill points in open world.")
-public class RefillMPCommand implements CommandHandler {
+@Command(label = "setlevel", aliases = {"level"}, permission = "player.setlevel", desc = "/setlevel [level] - Sets the targeted player's trailblazer level.")
+public class SetLevelCommand implements CommandHandler {
 
     @Override
     public void execute(Player sender, CommandArgs args) {
@@ -17,8 +17,10 @@ public class RefillMPCommand implements CommandHandler {
             return;
         }
         
-        sender.getCurrentLineup().addMp(GameConstants.MAX_MP);
-        this.sendMessage(sender, "Successfully refilled skill points for " + args.getTarget().getName());
+        int targetLevel = Utils.parseSafeInt(args.get(0));
+        args.getTarget().setLevel(targetLevel);
+
+        this.sendMessage(sender, "Set level to " + targetLevel);
     }
 
 }
