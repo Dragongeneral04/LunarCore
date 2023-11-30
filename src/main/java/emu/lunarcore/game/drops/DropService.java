@@ -63,32 +63,36 @@ public class DropService extends BaseGameService {
         }
     }
     
-    private int getRandomYellowAvatarId() {
-    
-        List<Integer> avatarIds = List.of(1003, 1004, 1101, 1107, 1104, 1209, 1211);/// 5 star avatars
-
-   
-        int randomIndex = ThreadLocalRandom.current().nextInt(avatarIds.size());
-        return avatarIds.get(randomIndex);
+    private int getRandomWeaponsId(String type) {
+         List<Integer> weaponsId = List.of();
+        if (type.equalsIgnoreCase("yellow")) {
+            weaponsId = List.of(23000, 23002, 23003, 23004, 23005, 23012, 23013); // 5 star Weapons
+        } else if (type.equalsIgnoreCase("purple")) {
+            weaponsId = List.of(21000, 21001, 21002, 21003, 21004, 21005, 21006, 21007, 21008, 21009, 21010, 21011, 21012, 21013, 21014, 21015, 21016, 21017, 21018, 21019, 21020);
+        } 
+        int randomIndex = ThreadLocalRandom.current().nextInt(weaponsId.size());
+        return weaponsId.get(randomIndex);
     }
+    
 
     // TODO filler
     public List<GameItem> calculateDropsFromProp(int propId) {
         List<GameItem> drops = new ArrayList<>();
        
-        if (Utils.randomChance(10)) {
-            int randomAvatarId = getRandomYellowAvatarId();
-            drops.add(new GameItem(randomAvatarId, 1));
+        if (Utils.randomChance(50)) {
+            int randomYellowWeapon = getRandomWeaponsId("yellow");
+            drops.add(new GameItem(randomYellowWeapon, 1));
         }  
-        else if(Utils.randomChance(80)){
-            drops.add(new GameItem(1, Utils.randomRange(100,500))); 
+        else if(Utils.randomChance(50)){
+            drops.add(new GameItem(1, Utils.randomRange(100,500)));
+            int randomPurpleWeapon = getRandomWeaponsId("purple");
+            drops.add(new GameItem(randomPurpleWeapon, 1));
         } 
-        else if (Utils.randomChance(90)) {
-            drops.add(new GameItem(GameConstants.MATERIAL_HCOIN_ID, 5));
-            drops.add(new GameItem(GameConstants.TRAILBLAZER_EXP_ID, 5));
-            drops.add(new GameItem(GameConstants.MATERIAL_COIN_ID, Utils.randomRange(20, 100)));
-        }
-        
+
+
+        drops.add(new GameItem(GameConstants.MATERIAL_HCOIN_ID, 5));
+        drops.add(new GameItem(GameConstants.TRAILBLAZER_EXP_ID, 5));
+        drops.add(new GameItem(GameConstants.MATERIAL_COIN_ID, Utils.randomRange(20, 100)));
         
         return drops;
     }
