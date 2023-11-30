@@ -512,6 +512,7 @@ public class Player {
                     // Handle drops
                     var drops = this.getServer().getDropService().calculateDropsFromProp(prop.getPropId());
                     this.getInventory().addItems(drops, true);
+                    
                     // Done
                     return prop;
                 } else {

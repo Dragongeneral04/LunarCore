@@ -1,5 +1,6 @@
 package emu.lunarcore.game.drops;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class DropService extends BaseGameService {
                 continue;
             }
             
+            
             for (ItemParam param : dropExcel.getDisplayItemList()) {
                 int id = param.getId();
                 int count = Utils.randomRange(0, 3);
@@ -61,13 +63,32 @@ public class DropService extends BaseGameService {
         }
     }
     
+    private int getRandomYellowAvatarId() {
+    
+        List<Integer> avatarIds = List.of(1003, 1004, 1101, 1107, 1104, 1209, 1211);/// 5 star avatars
+
+   
+        int randomIndex = ThreadLocalRandom.current().nextInt(avatarIds.size());
+        return avatarIds.get(randomIndex);
+    }
+
     // TODO filler
     public List<GameItem> calculateDropsFromProp(int propId) {
         List<GameItem> drops = new ArrayList<>();
+       
+        if (Utils.randomChance(10)) {
+            int randomAvatarId = getRandomYellowAvatarId();
+            drops.add(new GameItem(randomAvatarId, 1));
+        }  
+        else if(Utils.randomChance(80)){
+            drops.add(new GameItem(1, Utils.randomRange(100,500))); 
+        } 
+        else if (Utils.randomChance(90)) {
+            drops.add(new GameItem(GameConstants.MATERIAL_HCOIN_ID, 5));
+            drops.add(new GameItem(GameConstants.TRAILBLAZER_EXP_ID, 5));
+            drops.add(new GameItem(GameConstants.MATERIAL_COIN_ID, Utils.randomRange(20, 100)));
+        }
         
-        drops.add(new GameItem(GameConstants.MATERIAL_HCOIN_ID, 5));
-        drops.add(new GameItem(GameConstants.TRAILBLAZER_EXP_ID, 5));
-        drops.add(new GameItem(GameConstants.MATERIAL_COIN_ID, Utils.randomRange(20, 100)));
         
         return drops;
     }

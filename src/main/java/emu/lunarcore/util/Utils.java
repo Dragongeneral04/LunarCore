@@ -123,6 +123,10 @@ public class Utils {
     public static int randomRange(int min, int max) {
         return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
+    public static boolean randomChance(int probability) {
+        int randomValue = randomRange(1, 100); // assuming percentages, so range is 1 to 100
+        return randomValue <= probability;
+    }
 
     public static int randomElement(int[] array) {
         return array[ThreadLocalRandom.current().nextInt(0, array.length)];
