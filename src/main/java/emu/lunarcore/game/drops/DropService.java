@@ -4,6 +4,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 import java.util.List;
 
+import emu.lunarcore.LunarCore;
 import emu.lunarcore.GameConstants;
 import emu.lunarcore.data.GameData;
 import emu.lunarcore.data.common.ItemParam;
@@ -74,21 +75,28 @@ public class DropService extends BaseGameService {
         return weaponsId.get(randomIndex);
     }
     
-
+   
     // TODO filler
-    public List<GameItem> calculateDropsFromProp(int propId) {
+    public List<GameItem> calculateDropsFromProp(int propId, int playerLevel) {
         List<GameItem> drops = new ArrayList<>();
-       
-        if (Utils.randomChance(50)) {
-            int randomYellowWeapon = getRandomWeaponsId("yellow");
-            drops.add(new GameItem(randomYellowWeapon, 1));
-        }  
-        else if(Utils.randomChance(50)){
-            drops.add(new GameItem(1, Utils.randomRange(100,500)));
-            int randomPurpleWeapon = getRandomWeaponsId("purple");
-            drops.add(new GameItem(randomPurpleWeapon, 1));
-        } 
+        LunarCore.getLogger().info("propId: " + propId + ", playerLevel: " + playerLevel);
 
+        double baseDropRate = 0.10;
+        double levelIncreaseRate = 0.001; 
+        double totalDropRate = baseDropRate + (playerLevel * levelIncreaseRate);
+
+        if (Utils.randomChance(totalDropRate * 100)) {
+            if(Utils.randomChance(50)){
+                int randomYellowWeapon = getRandomWeaponsId("yellow");
+                drops.add(new GameItem(randomYellowWeapon, 1));
+            } 
+            else {
+                drops.add(new GameItem(1, Utils.randomRange(100,500)));
+                int randomPurpleWeapon = getRandomWeaponsId("purple");
+                drops.add(new GameItem(randomPurpleWeapon, 1));
+            }
+
+        }  
 
         drops.add(new GameItem(GameConstants.MATERIAL_HCOIN_ID, 5));
         drops.add(new GameItem(GameConstants.TRAILBLAZER_EXP_ID, 5));

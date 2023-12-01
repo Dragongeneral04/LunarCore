@@ -521,7 +521,8 @@ public class Player {
                     // Open chest
                     prop.setState(PropState.ChestUsed);
                     // Handle drops
-                    var drops = this.getServer().getDropService().calculateDropsFromProp(prop.getPropId());
+                    var playerLevel = this.getLevel();
+                    var drops = this.getServer().getDropService().calculateDropsFromProp(prop.getPropId(), playerLevel);
                     this.getInventory().addItems(drops, true);
                     
                     // Done

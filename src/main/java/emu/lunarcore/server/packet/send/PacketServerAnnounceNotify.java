@@ -9,7 +9,7 @@ public class PacketServerAnnounceNotify extends BasePacket {
     
     public PacketServerAnnounceNotify() {
         super(CmdId.ServerAnnounceNotify);
-
+    
         byte[] byteArray = {
             (byte)0x12, (byte)0xb0, (byte)0x01, (byte)0x08, (byte)0x00, (byte)0x20, (byte)0xff, (byte)0xbf, (byte)0xca, (byte)0xf3, 
             (byte)0x84, (byte)0xa3, (byte)0x02, (byte)0x30, (byte)0x00, (byte)0x38, (byte)0x64, (byte)0x48, (byte)0x01, (byte)0x58, 
@@ -30,7 +30,9 @@ public class PacketServerAnnounceNotify extends BasePacket {
             (byte)0xa3, (byte)0xe4, (byte)0xbd, (byte)0xa0, (byte)0xe5, (byte)0xb0, (byte)0xb1, (byte)0xe8, (byte)0xa2, (byte)0xab, 
             (byte)0xe9, (byte)0xaa, (byte)0x97, (byte)0xe4, (byte)0xba, (byte)0x86, (byte)0xef, (byte)0xbc, (byte)0x81
         };
-
+        
         this.setData(byteArray);
     }
+   
+     
 }
