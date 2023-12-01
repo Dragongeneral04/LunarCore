@@ -64,44 +64,56 @@ public class DropService extends BaseGameService {
         }
     }
     
-    private int getRandomWeaponsId(String type) {
-         List<Integer> weaponsId = List.of();
-        if (type.equalsIgnoreCase("yellow")) {
-            weaponsId = List.of(23000, 23002, 23003, 23004, 23005, 23012, 23013); // 5 star Weapons
-        } else if (type.equalsIgnoreCase("purple")) {
-            weaponsId = List.of(21000, 21001, 21002, 21003, 21004, 21005, 21006, 21007, 21008, 21009, 21010, 21011, 21012, 21013, 21014, 21015, 21016, 21017, 21018, 21019, 21020);
-        } 
-        int randomIndex = ThreadLocalRandom.current().nextInt(weaponsId.size());
-        return weaponsId.get(randomIndex);
-    }
     
-   
+    
+    private String getPropName(int propId) {
+        if (propId == 60001 || propId == 60004 || propId == 60101 || propId == 60104 || propId == 60201 || propId == 60204) {
+            return "Basic Treasure";
+        } else if (propId == 60002 || propId == 60005 || propId == 60102 || propId == 60105 || propId == 60202 || propId == 60205) {
+            return "Bountiful Treasure";
+        } else if (propId == 60003 || propId == 60006 || propId == 60103 || propId == 60106 || propId == 60203 || propId == 60206) {
+            return "Precious Treasure";
+        } else {
+            return "Unknown";
+        }
+    }
+
     // TODO filler
-    public List<GameItem> calculateDropsFromProp(int propId, int playerLevel) {
+    public List<GameItem> calculateDropsFromProp(int propId) {
         List<GameItem> drops = new ArrayList<>();
-        LunarCore.getLogger().info("propId: " + propId + ", playerLevel: " + playerLevel);
+        LunarCore.getLogger().info("propId: " + propId);
 
-        double baseDropRate = 0.10;
-        double levelIncreaseRate = 0.001; 
-        double totalDropRate = baseDropRate + (playerLevel * levelIncreaseRate);
-
-        if (Utils.randomChance(totalDropRate * 100)) {
-            if(Utils.randomChance(50)){
-                int randomYellowWeapon = getRandomWeaponsId("yellow");
-                drops.add(new GameItem(randomYellowWeapon, 1));
-            } 
-            else {
-                drops.add(new GameItem(1, Utils.randomRange(100,500)));
-                int randomPurpleWeapon = getRandomWeaponsId("purple");
-                drops.add(new GameItem(randomPurpleWeapon, 1));
-            }
-
-        }  
-
+        String propName = getPropName(propId);
+        switch (propName) {
+        case "Basic Treasure":
+            calculateDropsForBasicTreasure(drops);
+            break;
+        case "Bountiful Treasure":
+            calculateDropsForBountifulTreasure(drops);
+            break;
+        case "Precious Treasure":
+            calculateDropsForPreciousTreasure(drops);
+            break;
+        case "Unknown":
+            LunarCore.getLogger().info("Unknown Prop:" + propId);
+            break;
+        }
+        return drops;
+    }
+    private void calculateDropsForBasicTreasure(List<GameItem> drops) {
         drops.add(new GameItem(GameConstants.MATERIAL_HCOIN_ID, 5));
         drops.add(new GameItem(GameConstants.TRAILBLAZER_EXP_ID, 5));
         drops.add(new GameItem(GameConstants.MATERIAL_COIN_ID, Utils.randomRange(20, 100)));
-        
-        return drops;
     }
+    private void calculateDropsForBountifulTreasure(List<GameItem> drops) {
+        drops.add(new GameItem(GameConstants.MATERIAL_HCOIN_ID, Utils.randomRange(50, 150)));
+        drops.add(new GameItem(GameConstants.TRAILBLAZER_EXP_ID, Utils.randomRange(10, 30)));
+        drops.add(new GameItem(GameConstants.MATERIAL_COIN_ID, Utils.randomRange(50, 100)));
+    }
+    private void calculateDropsForPreciousTreasure(List<GameItem> drops) {
+        drops.add(new GameItem(GameConstants.MATERIAL_HCOIN_ID, Utils.randomRange(100, 200)));
+        drops.add(new GameItem(GameConstants.TRAILBLAZER_EXP_ID, Utils.randomRange(15, 50)));
+        drops.add(new GameItem(GameConstants.MATERIAL_COIN_ID, Utils.randomRange(80, 150)));
+    }
+
 }
