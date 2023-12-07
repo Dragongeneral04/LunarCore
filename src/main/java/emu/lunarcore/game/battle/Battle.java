@@ -121,6 +121,10 @@ public class Battle {
         return buff;
     }
     
+    public boolean hasBuff(int buffId) {
+        return this.buffs.stream().filter(buff -> buff.getId() == buffId).findFirst().isPresent();
+    }
+    
     public void clearBuffs() {
         this.buffs.clear();
     }
@@ -182,6 +186,13 @@ public class Battle {
                         buff.addTargetIndex(i);
                     }
                 }
+            }
+        }
+        
+        // Apply food buffs to battle
+        if (player.getFoodBuffs().size() > 0) {
+            for (int buffId : player.getFoodBuffs().values()) {
+                this.addBuff(buffId, -1);
             }
         }
         

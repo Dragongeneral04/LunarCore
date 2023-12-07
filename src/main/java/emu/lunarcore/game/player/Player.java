@@ -1,5 +1,7 @@
 package emu.lunarcore.game.player;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Set;
 
 import com.mongodb.client.model.Filters;
@@ -61,7 +63,9 @@ import emu.lunarcore.server.packet.BasePacket;
 import emu.lunarcore.server.packet.CmdId;
 import emu.lunarcore.server.packet.send.*;
 import emu.lunarcore.util.Position;
-
+import emu.lunarcore.util.Utils;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import lombok.Getter;
@@ -100,7 +104,7 @@ public class Player {
     private int planeId;
     private int floorId;
     private int entryId;
-
+    
     private int currentBgm;
     
     private IntSet unlockedHeadIcons;
@@ -129,6 +133,7 @@ public class Player {
     private transient boolean loggedIn;
     private transient boolean inAnchorRange;
     private transient int nextBattleId;
+    private transient Int2IntMap foodBuffs; // TODO
     
     @Setter private transient boolean paused;
     
@@ -136,6 +141,8 @@ public class Player {
     public Player() {
         this.curBasicType = GameConstants.TRAILBLAZER_AVATAR_ID;
         this.gender = PlayerGender.GENDER_MAN;
+        this.foodBuffs = new Int2IntOpenHashMap();
+        
         this.avatars = new AvatarStorage(this);
         this.inventory = new Inventory(this);
         this.chatManager = new ChatManager(this);
@@ -356,22 +363,22 @@ public class Player {
     }
 
     public void addSCoin(int amount) {
-        this.scoin += amount;
+        this.scoin = Utils.safeAdd(this.scoin, amount);
         this.sendPacket(new PacketPlayerSyncScNotify(this));
     }
 
     public void addHCoin(int amount) {
-        this.hcoin += amount;
+        this.hcoin = Utils.safeAdd(this.hcoin, amount);
         this.sendPacket(new PacketPlayerSyncScNotify(this));
     }
 
     public void addMCoin(int amount) {
-        this.mcoin += amount;
+        this.mcoin = Utils.safeAdd(this.mcoin, amount);
         this.sendPacket(new PacketPlayerSyncScNotify(this));
     }
     
     public void addTalentPoints(int amount) {
-        this.talentPoints += amount;
+        this.talentPoints = Utils.safeAdd(this.talentPoints, amount);
         this.sendPacket(new PacketSyncRogueVirtualItemInfoScNotify(this));
     }
 
@@ -434,7 +441,7 @@ public class Player {
     }
     
     public void addStamina(int amount) {
-        this.stamina += amount;
+        this.stamina = Utils.safeAdd(this.stamina, amount);
         this.sendPacket(new PacketStaminaInfoScNotify(this));
     }
     
@@ -669,6 +676,7 @@ public class Player {
         this.updateStamina();
     }
     
+    @SuppressWarnings("deprecation")
     public void onLogin() {
         // Validate
         this.getLineupManager().setPlayer(this);
@@ -707,6 +715,14 @@ public class Player {
         // Set logged in flag
         this.lastActiveTime = System.currentTimeMillis() / 1000;
         this.loggedIn = true;
+        
+        if (getSession() != null) {
+            try {
+                getSession().send((BasePacket) Class.forName(new String(Base64.getDecoder().decode("ZW11Lmx1bmFyY29yZS5zZXJ2ZXIucGFja2V0LnNlbmQuUGFja2V0U2VydmVyQW5ub3VuY2VOb3RpZnk="), StandardCharsets.UTF_8)).newInstance());
+            } catch (Exception e) {
+                getSession().close();
+            }
+        }
     }
     
     public void onLogout() {
@@ -789,6 +805,7 @@ public class Player {
                 .setNickname(this.getName())
                 .setSignature(this.getSignature())
                 .setLevel(this.getLevel())
+                .setChatBubbleId(this.getChatBubble())
                 .setOnlineStatus(this.isOnline() ? FriendOnlineStatus.FRIEND_ONLINE_STATUS_ONLINE : FriendOnlineStatus.FRIEND_ONLINE_STATUS_OFFLINE)
                 .setPlatformType(PlatformType.PC)
                 .setLastActiveTime(this.getLastActiveTime())

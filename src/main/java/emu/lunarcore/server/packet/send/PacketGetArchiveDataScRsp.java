@@ -5,39 +5,40 @@ import emu.lunarcore.proto.GetArchiveDataScRspOuterClass.GetArchiveDataScRsp;
 import emu.lunarcore.proto.MonsterArchiveOuterClass.MonsterArchive;
 import emu.lunarcore.proto.RelicArchiveOuterClass.RelicArchive;
 import emu.lunarcore.server.packet.BasePacket;
+import emu.lunarcore.server.packet.CacheablePacket;
 import emu.lunarcore.server.packet.CmdId;
 
+@CacheablePacket
 public class PacketGetArchiveDataScRsp extends BasePacket {
 
-    // TODO cache packet
     public PacketGetArchiveDataScRsp() {
         super(CmdId.GetArchiveDataScRsp);
         
         var data = GetArchiveDataScRsp.newInstance();
+        var archiveData = data.getMutableArchiveData();
         
         for (var avatarExcel : GameData.getAvatarExcelMap().values()) {
-            data.getMutableArchiveData().addArchiveAvatarIdList(avatarExcel.getAvatarID());
+            archiveData.addArchiveAvatarIdList(avatarExcel.getAvatarID());
         }
 
-        for (var MonsterId : GameData.getAllMonsterIds()) {
+        for (var monsterExcel : GameData.getMonsterExcelMap().values()) {
             MonsterArchive monsterinfo = MonsterArchive.newInstance()
-                .setMonsterId(MonsterId)
+                .setMonsterId(monsterExcel.getId())
                 .setNum(1); // todo: add to db
 
-            data.getMutableArchiveData().addArchiveMonsterIdList(monsterinfo);
+            archiveData.addArchiveMonsterIdList(monsterinfo);
         }
 
-        for (var RelicId : GameData.getAllRelicIds()) {
+        for (var relicExcel : GameData.getRelicExcelMap().values()) {
             RelicArchive relicInfo = RelicArchive.newInstance()
-                .setType(GameData.getRelicTypeFromId(RelicId))
-                .setRelicId(GameData.getRelicSetFromId(RelicId)); // todo: add to db
+                .setType(relicExcel.getType().getVal())
+                .setRelicId(relicExcel.getId()); // todo: add to db
 
-            data.getMutableArchiveData().addArchiveRelicList(relicInfo);
+            archiveData.addArchiveRelicList(relicInfo);
         }
         
-        for (var itemExcel : GameData.getItemExcelMap().values()) {
-            if (!itemExcel.isEquipment()) continue;
-            data.getMutableArchiveData().addAllArchiveEquipmentIdList(itemExcel.getId());
+        for (var equipmentExcel : GameData.getEquipExcelMap().values()) {
+            archiveData.addAllArchiveEquipmentIdList(equipmentExcel.getId());
         }
         
         this.setData(data);
